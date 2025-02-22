@@ -1,0 +1,36 @@
+require("dotenv").config();
+const { webkit } = require("playwright");
+
+const scraper = async (regNo) => {
+  let browser;
+  try {
+    browser = await webkit.launch({ headless: true, args: ['--no-sandbox', '--disable-gpu'] });
+    const page = await browser.newPage();
+
+    // Disable all resources to improve speed (images, CSS, fonts, etc.)
+    await page.route('**/*.{png,jpg,jpeg,css,woff,woff2,eot,ttf,svg}', (route) => route.abort());
+
+    await page.goto(process.env.LOGIN_URL, { waitUntil: 'domcontentloaded' });
+
+    // Wait for the input fields to ensure page has loaded enough for interaction
+    await page.fill("input[name='Register']", regNo);
+    await page.click("input[type='submit'][value='Result']");
+
+    // Wait for the table content to load with a reduced timeout
+    await page.waitForSelector(".table.tab-content", { timeout: 5000 });
+
+    // Extract content from the table
+    const rawInfo = await page.textContent(".table.tab-content");
+    const cleaninfo = rawInfo.replace("Registration #", "").replace("Student Full Name", "").trim();
+    const match = cleaninfo.match(/(\d{4}-?[A-Za-z]{2,}-?\d+)\s+(.+)/);
+
+    return match ? { registrationNumber: match[1], name: match[2] } : null;
+  } catch (error) {
+    console.error("Scraping error:", error);
+    return null;
+  } finally {
+    if (browser) await browser.close();
+  }
+};
+
+module.exports = scraper;

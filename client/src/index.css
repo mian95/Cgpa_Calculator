@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --custom-light-text: #16a34a; /* Tailwind green-600 */
+  --custom-dark-text: #f97316;
+  /* Tailwind orange-500 */
+}
+
+.text-custom {
+  @apply transition-colors font-[Nunito] drop-shadow-lg text-[var(--custom-light-text)] 
+   dark:text-[var(--custom-dark-text)];
+}
+.secondary-text {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+.primary-boxes {
+  @apply bg-[#f9f9f9] dark:bg-gray-800 dark:border-gray-500 text-gray-700 dark:text-gray-300;
+}

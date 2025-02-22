@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Result</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      /* Hover Effects */
+      .row-hover:hover {
+        background-color: #f0f4f8;
+        transform: translateY(-4px);
+        transition: all 0.3s ease-out;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .row-hover:active {
+        transform: translateY(0);
+      }
+
+      /* Card Section Styling */
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .gradient-bg {
+        background: linear-gradient(145deg, #ff7a00, #ff3b30);
+        transition: background 0.3s ease-in-out;
+      }
+
+      .gradient-bg:hover {
+        background: linear-gradient(145deg, #ff3b30, #ff7a00);
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      /* Responsive Design for Mobile */
+      @media (max-width: 1024px) {
+        .grid-cols-2-mobile {
+          grid-template-columns: 1fr;
+        }
+
+        .table-container {
+          overflow-x: scroll;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 8px;
+        }
+
+        .card {
+          padding: 16px;
+        }
+
+        .heading {
+          font-size: 1.5rem;
+        }
+
+        .sub-heading {
+          font-size: 0.875rem;
+        }
+
+        .btn {
+          padding: 12px 24px;
+        }
+      }
+
+      /* Grade Specific Colors */
+      .grade-A {
+        color: #4caf50;
+      }
+
+      .grade-B {
+        color: #ff9800;
+      }
+
+      .grade-C {
+        color: #f44336;
+      }
+
+      .grade-D {
+        color: #9e9e9e;
+      }
+
+      /* Typography */
+      .heading {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #333;
+      }
+
+      .sub-heading {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #555;
+      }
+
+      .text-small {
+        font-size: 0.875rem;
+        color: #888;
+      }
+
+      .text-primary {
+        color: #ff6f61;
+      }
+
+      .text-secondary {
+        color: #6a11cb;
+      }
+
+      .back-btn {
+        background-color: #f8fafc;
+        padding: 8px 16px;
+        border-radius: 8px;
+        text-align: center;
+        color: #4a4a4a;
+        font-size: 16px;
+        transition: 0.3s;
+        display: inline-block;
+        margin-top: 20px;
+      }
+
+      .back-btn:hover {
+        background-color: #e6e7ec;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Improved Button Styles */
+      .btn {
+        background-color: #ff6f61;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .btn:hover {
+        background-color: #d64b40;
+      }
+
+      /* Improved Table Styles */
+      table {
+        border-spacing: 0;
+        width: 100%;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f0f0f0;
+        font-weight: bold;
+      }
+
+      tr:hover {
+        background-color: #e0e7ff;
+      }
+    </style>
+  </head>
+
+  <body class="p-4 font-sans">
+    <div class="container bg-gray-100 mx-auto px-4 py-8">
+      <!-- Search Section -->
+      <div class="mb-8 card max-w-lg mx-auto">
+        <h2 class="heading text-center text-primary">Student Result Search</h2>
+        <form action="/result" method="POST">
+          <div class="mb-4">
+            <label for="register" class="block text-gray-700 font-medium mb-2">
+              <i class="fas fa-id-card mr-2"></i>Register #:
+            </label>
+            <input
+              type="text"
+              name="Register"
+              id="register"
+              required
+              class="w-full border border-gray-300 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Enter your Register #"
+            />
+          </div>
+          <div class="text-center">
+            <button type="submit" class="btn">
+              <i class="fas fa-search mr-2"></i>Search
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Student Information Section -->
+      <% if (result) { %>
+      <div class="mb-8 card max-w-lg mx-auto">
+        <h2 class="sub-heading text-center">Student Information</h2>
+        <hr class="border-gray-300 my-5" />
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <p class="font-medium text-gray-700">
+              <i class="fas fa-id-card mr-1 md:mr-2"></i>Registration Number:
+            </p>
+            <p class="text-gray-800"><%= result.registrationNo %></p>
+          </div>
+          <div>
+            <p class="font-medium text-gray-700">
+              <i class="fas fa-user mr-1 md:mr-2"></i>Name:
+            </p>
+            <p class="text-gray-800"><%= result.studentName %></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-md flex justify-center">
+        <!-- Result Table Section -->
+        <% if (Array.isArray(result.subjects)) { %> <%
+        result.subjects.forEach((ob) => { %>
+          <div
+            class="result table bg-white rounded-lg  shadow-lg overflow-hidden max-w-4xl flex flex-col"
+          >
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-gray-100 text-small lg:text-lg">
+                  <th class=""><i class="fas fa-book mr-2"></i>Subject</th>
+                  <th class=""><i class="fas fa-clock mr-2"></i>Cr. Hr.</th>
+                  <th class=""><i class="fas fa-percent mr-2"></i>Marks</th>
+                  <th class="">
+                    <i class="fas fa-graduation-cap mr-2"></i>Grade
+                  </th>
+                  <th class=""><i class="fas fa-star mr-2"></i>Grade Pt.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="border-b border-gray-200 row-hover">
+                  <td><%= ob.subjectCode %></td>
+                  <td><%= ob.creditHours %></td>
+                  <td class=""><%= ob.totalMarks %></td>
+                  <td class="grade-B"><%= ob.grade %></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <% }) %> <% } else if (result.subjects) { %>
+        <!-- Handle case where subjects not found -->
+        > <% } else { %>
+        <p>No subjects found.</p>
+        <% } %>
+      </div>
+      <% } %>
+    </div>
+  </body>
+</html>
