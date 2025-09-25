@@ -17,7 +17,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Keep only this router (no duplicate `/Cgpa/result`)
 app.use("/Cgpa", router);
 
 app.listen(port, () => {

@@ -1,12 +1,18 @@
 require("dotenv").config();
-const { webkit } = require("playwright");
+const { chromium } = require("playwright");
 
 const scraper = async (regNo) => {
   let browser;
   try {
     // Launch the browser in headless mode
-    browser = await webkit.launch({ headless: true, args: ["--no-sandbox"] });
-    const page = await browser.newPage();
+    browser = await chromium.launch({ headless: true, args: ["--no-sandbox"] });
+
+   const context = await browser.newContext({
+      ignoreHTTPSErrors: true, // ✅ ignore SSL errors
+    });
+
+
+    const page = await context.newPage();
 
     // Block unnecessary resources to speed up the scraping
     await page.route(
@@ -15,12 +21,12 @@ const scraper = async (regNo) => {
     );
 
     // Navigate to the login page and fill in the registration number
-    await page.goto(`${process.env.LOGIN_URL}`, {
+    await page.goto(`https://lms.uaf.edu.pk/login/index.php`, {
       waitUntil: "domcontentloaded",
     });
     await page.fill("#REG", regNo);
     await page.click("input[type='submit'][value='Result']");
-    await page.waitForSelector(".table.tab-content", { timeout: 2000 });
+    await page.waitForSelector(".table.tab-content", { timeout: 20000 });
 
     // Extract and clean the information from the page
     const rawInfo = await page.textContent(".table.tab-content");
@@ -151,7 +157,6 @@ const scraper = async (regNo) => {
       };
     });
 
-    console.log({ registrationNo, studentName, ...result });
     return { registrationNo, studentName, ...result };
   } catch (error) {
     console.error("Scraping error:", error.message);

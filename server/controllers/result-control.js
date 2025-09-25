@@ -1,4 +1,4 @@
-const scraper = require("../utils/scrap");
+const scraper = require("../utils/scraper");
 
 // ? route for home page
 const homeHandler = async (req, res) => {
